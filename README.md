@@ -447,9 +447,23 @@ The UI follows an Apple-inspired dark design system:
 
 ---
 
+## License & Attribution
+
+© 2026 [0xFloCode](https://github.com/0xFloCode). All rights reserved.
+
+This project is an **independent, third-party desktop frontend** for [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector).
+It is **not affiliated with, endorsed by, or sponsored by NVIDIA Corporation**.
+
+- **SkillSpector UI** (this project): Private / All rights reserved.
+- **NVIDIA SkillSpector** (the CLI scanner): Licensed under the [Apache License 2.0](https://github.com/NVIDIA/skillspector/blob/main/LICENSE) by NVIDIA Corporation.
+- **NVIDIA** and **SkillSpector** are trademarks of NVIDIA Corporation.
+
+This application does not modify, bundle, or redistribute any part of NVIDIA SkillSpector. It invokes the separately installed CLI as a subprocess.
+
+---
+
 <div align="center">
 
 *Built with [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector) · Electron · React · TypeScript*
 
 </div>
-
