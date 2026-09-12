@@ -19,11 +19,13 @@
 
 ## Overview
 
-SkillSpector UI is a standalone Windows desktop application that provides a dedicated graphical interface for [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector) — the static security and quality scanner for AI agent skill packages.
+SkillSpector UI is a standalone Windows desktop application that provides a dedicated graphical interface for [**NVIDIA SkillSpector**](https://github.com/NVIDIA/skillspector) — the static security and quality scanner for AI agent skill packages.
 
 Instead of running SkillSpector from the command line and manually parsing JSON output, SkillSpector UI wraps the entire workflow into a clean, keyboard-navigable desktop experience with real-time progress, structured results, scan history, and multi-format export.
 
-> **No virtual environment activation required.** The app auto-detects the SkillSpector installation and manages all subprocess calls internally.
+> [!IMPORTANT]
+> **This application requires [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector) to be installed.**
+> SkillSpector UI is a frontend — it does not include the scanner itself. Install SkillSpector first, then the app auto-detects the installation and manages all subprocess calls internally. No virtual environment activation required.
 
 ---
 
@@ -294,7 +296,7 @@ skillspector-ui/
 |-------------|---------|-------|
 | **Node.js** | ≥ 18 | Required for Electron and Vite |
 | **npm** | ≥ 9 | Included with Node.js |
-| **NVIDIA SkillSpector** | ≥ 2.11 | Must be installed with Python venv. Auto-detected or configurable in Settings. |
+| **[NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector)** | ≥ 2.11 | **Required.** Install with Python venv per [NVIDIA's instructions](https://github.com/NVIDIA/skillspector#installation). Auto-detected or configurable in Settings. |
 | **Ollama** *(optional)* | Any | Only needed for LLM-enhanced semantic analysis. Auto-detected at `localhost:11434`. |
 
 ---
