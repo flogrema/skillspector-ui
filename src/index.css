@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html, body {
+    background-color: #09090b;
+    color: #fafafa;
+    font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Custom dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  /* Focus ring standard for accessibility */
+  *:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.5);
+  }
+}
+
+@layer utilities {
+  /* Glassmorphic styling for functional layer (header, sidebar, floating modals) */
+  .glass-functional {
+    background: rgba(18, 18, 21, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-surface {
+    background: rgba(24, 24, 28, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .hairline-border {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .hairline-border-b {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .hairline-border-t {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .hairline-border-r {
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .hairline-border-l {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Solid surfaces for content layer */
+  .surface-card {
+    background-color: #121215;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+  }
+
+  .surface-card-hover {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .surface-card-hover:hover {
+    background-color: #18181c;
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+
+  .surface-elevated {
+    background-color: #1c1c1e;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
