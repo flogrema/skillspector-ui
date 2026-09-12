@@ -1,469 +1,230 @@
-<div align="center">
+# SkillSpector UI
 
-# 🛡️ SkillSpector UI
+Desktop GUI for [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector).
 
-**Desktop GUI for NVIDIA SkillSpector — AI Agent Security Scanner**
-
-*Electron · React 19 · TypeScript · Tailwind CSS · Zustand*
-
+![License](https://img.shields.io/badge/license-MIT-22c55e)
+![Platform](https://img.shields.io/badge/platform-Windows-0078D4)
 ![Electron](https://img.shields.io/badge/Electron-35-47848F?logo=electron&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
-![Tailwind](https://img.shields.io/badge/TailwindCSS-3-06B6D4?logo=tailwindcss&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-22c55e)
-
-</div>
 
 ---
 
-## Overview
+## What is this?
 
-SkillSpector UI is a standalone Windows desktop application that provides a dedicated graphical interface for [**NVIDIA SkillSpector**](https://github.com/NVIDIA/skillspector) — the static security and quality scanner for AI agent skill packages.
+[NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector) is a security scanner for AI agent skill packages. It runs as a command-line tool and outputs JSON reports.
 
-Instead of running SkillSpector from the command line and manually parsing JSON output, SkillSpector UI wraps the entire workflow into a clean, keyboard-navigable desktop experience with real-time progress, structured results, scan history, and multi-format export.
+**SkillSpector UI** wraps that CLI into a desktop application — so you can configure scans, browse results, track history, and export reports without touching the terminal or parsing JSON by hand.
 
-> [!IMPORTANT]
-> **This application requires [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector) to be installed.**
-> SkillSpector UI is a frontend — it does not include the scanner itself. Install SkillSpector first, then the app auto-detects the installation and manages all subprocess calls internally. No virtual environment activation required.
+This is an independent project. It is not affiliated with, endorsed by, or supported by NVIDIA.
 
----
-
-## Screenshots
-
-### Scan View — Configuration & Results
-
-![Scan view showing recursive scan with 7 skills, LLM analysis enabled via Ollama, bento metric cards, and sortable results table with severity badges](docs/screenshots/scan_view.png)
-
-> Recursive scan of 7 skills with LLM-enhanced analysis (qwen2.5-coder:14b). Bento metric cards show skills scanned, max risk score, findings count, and completeness. Dense results table with severity badges, inspection warnings, and per-skill detail actions.
-
-### History & Scan Comparison
-
-![History view showing scan audit history table with timestamps, target paths, scan modes, LLM models, scores, and completion status](docs/screenshots/history_view.png)
-
-> Browse past scan reports, track risk regressions, and compare changes over time. Each entry shows mode, LLM model, score, severity, findings count, and completion status.
-
-### Multi-Format Export
-
-![Export modal with four format options: JSON Report, Copy Summary, Markdown, and SARIF](docs/screenshots/export_modal.png)
-
-> Export scan reports in multiple formats. JSON and Copy Summary are instant from stored data. Markdown and SARIF trigger SkillSpector's native formatters with user confirmation.
-
+![Scan view showing a recursive scan of 7 skills with LLM analysis, summary cards, and results table](docs/screenshots/scan_view.png)
 
 ---
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| **Auto-Detection** | Automatically locates `skillspector.exe` via known paths, relative candidates, or system PATH. Reports version and Python runtime. |
-| **Single & Recursive Scans** | Scan a single skill folder or recursively scan multi-skill directories with real-time streaming progress (`[3/7] Scanning skill-name`). |
-| **LLM-Enhanced Analysis** | Native Ollama integration — auto-detects local or LAN instances, enumerates models, and passes process-scoped environment variables. |
-| **Bento Summary Cards** | Apple-inspired metric cards showing Security Score, Skills Analyzed, Findings count, and Analysis Completeness at a glance. |
-| **Dense Results Table** | High-density sortable and filterable table with severity badges (always color + icon + text for accessibility). |
-| **Three-Tier Warning Separation** | Security findings, inspection warnings (ledger exceptions), and runtime/config stderr warnings are strictly separated — never conflated. |
-| **Transparent Detail Fallback** | Clicking a skill in recursive results transparently runs a deep single-skill scan if the recursive data lacks full detail. Cached for instant re-access. |
-| **Scan History** | Every scan is persisted to `%APPDATA%` with lightweight index + full report files. Browse, favorite, delete, or compare past scans. |
-| **Scan Comparison** | Side-by-side comparison of any two scans. Automatically detects non-equivalent configurations and uses neutral language instead of misleading "Improved"/"Resolved" labels. |
-| **Multi-Format Export** | Instant JSON from stored data, clipboard markdown summary, and user-confirmed Markdown/SARIF via SkillSpector's native formatters. |
-| **Favorites** | Bookmark frequently scanned directories with one-click quick-launch. |
-| **Keyboard Shortcuts** | `Alt+1–4` for view switching, `Ctrl+Enter` to start scan. |
-| **Safe Cancellation** | Process tree termination via `taskkill /PID /T /F` with safe argument arrays — no shell string interpolation. |
+**Scanning**
+- Single-skill and recursive multi-skill scans with real-time progress
+- Optional LLM-enhanced analysis via local [Ollama](https://ollama.com) instance
+- Live stdout/stderr streaming during scan execution
+- Cancel running scans (full process tree termination)
+
+**Results**
+- Summary cards: security score, skill count, findings, analysis completeness
+- Sortable and filterable results table with severity indicators
+- Per-skill detail view with findings, evidence, code locations, and remediation
+- Three-tier separation: security findings, inspection warnings, runtime warnings — never mixed
+
+**History & Comparison**
+- Every scan is saved automatically to `%APPDATA%`
+- Browse, search, favorite, and delete past scans
+- Compare any two scans side-by-side
+- Non-equivalent configurations (e.g. LLM on vs. off) are detected and labeled — no misleading "Improved" or "Resolved" claims
+
+**Export**
+- JSON — instant export from stored data, no re-scan needed
+- Markdown summary — copy to clipboard
+- Markdown / SARIF files — generated via SkillSpector's native formatters
+
+**Configuration**
+- Auto-detects `skillspector.exe` from known paths, relative candidates, or system PATH
+- Manual path override in Settings
+- Ollama connection and model selection
+- Favorite scan targets with one-click launch
 
 ---
 
-## Architecture
+## Screenshots
 
-### System Overview
-
-```mermaid
-graph TB
-    subgraph Desktop["SkillSpector UI — Electron App"]
-        subgraph Renderer["Renderer Process (Sandboxed)"]
-            React["React 19 + Zustand"]
-            Views["Views: Scan · History · Favorites · Settings"]
-            React --> Views
-        end
-
-        subgraph Bridge["Context Bridge"]
-            Preload["preload.ts — IPC API"]
-        end
-
-        subgraph Main["Main Process (Node.js)"]
-            IPC["IPC Handlers"]
-            Runner["CLI Runner Service"]
-            History["History Service"]
-            Detector["Detector Service"]
-            Completeness["Completeness Service"]
-            Export["Export Service"]
-            Ollama["Ollama Service"]
-            Storage["Storage Service"]
-        end
-    end
-
-    subgraph External["External Services"]
-        CLI["SkillSpector CLI\n(spawn, shell: false)"]
-        OllamaServer["Ollama Server\n(localhost:11434)"]
-        AppData["%APPDATA%\nSettings · History · Favorites"]
-    end
-
-    React -- "window.api.*" --> Preload
-    Preload -- "ipcRenderer.invoke" --> IPC
-    IPC --> Runner
-    IPC --> History
-    IPC --> Detector
-    IPC --> Export
-    IPC --> Ollama
-    Runner -- "child_process.spawn" --> CLI
-    Ollama -- "HTTP fetch" --> OllamaServer
-    History --> AppData
-    Storage --> AppData
-
-    style Renderer fill:#09090b,stroke:#0ea5e9,color:#fafafa
-    style Main fill:#121215,stroke:#3f3f46,color:#fafafa
-    style Bridge fill:#1c1c1e,stroke:#0ea5e9,color:#0ea5e9
-    style External fill:#18181b,stroke:#3f3f46,color:#a1a1aa
-```
-
-### Scan Workflow
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Renderer as React UI
-    participant Preload as Context Bridge
-    participant Main as Main Process
-    participant CLI as SkillSpector CLI
-    participant FS as File System
-
-    User->>Renderer: Configure target, mode, LLM
-    User->>Renderer: Click "Start Scan"
-    Renderer->>Preload: window.api.startScan(params)
-    Preload->>Main: ipc: scan:start
-
-    Main->>Main: Validate target path exists
-    Main->>Main: Build argument array
-    Main->>CLI: spawn(exe, args, {shell: false})
-    
-    loop Real-time streaming
-        CLI-->>Main: stdout line
-        Main-->>Renderer: scan:stdout (scanId, line)
-        Main->>Main: Parse progress [X/Y]
-        Main-->>Renderer: scan:progress (scanId, info)
-    end
-
-    CLI-->>Main: stderr warnings
-    Main-->>Renderer: scan:stderr (scanId, line)
-
-    CLI->>FS: Write JSON report to temp file
-    CLI-->>Main: Process exit (code 0)
-    
-    Main->>FS: Read temp JSON report
-    Main->>Main: Normalize to NormalizedScanResult
-    Main->>Main: Derive completeness status
-    Main-->>Renderer: scan:complete (scanId, result)
-    Main->>FS: Save to %APPDATA% history
-
-    Renderer->>Renderer: Update Zustand store
-    Renderer->>User: Display summary + results
-```
-
-### Data Flow — Export
-
-```mermaid
-flowchart LR
-    subgraph Instant["Instant (No Re-scan)"]
-        A[Stored JSON] -->|Read from history| B[JSON Export]
-        A -->|Format in renderer| C[Clipboard Summary]
-    end
-
-    subgraph Confirmed["User-Confirmed (CLI Re-run)"]
-        D[User confirms] -->|spawn CLI with --format| E[Markdown Export]
-        D -->|spawn CLI with --format| F[SARIF Export]
-    end
-
-    style Instant fill:#09090b,stroke:#10b981,color:#fafafa
-    style Confirmed fill:#09090b,stroke:#f59e0b,color:#fafafa
-```
+| Scan Results | History | Export |
+|:---:|:---:|:---:|
+| ![Scan view](docs/screenshots/scan_view.png) | ![History view](docs/screenshots/history_view.png) | ![Export modal](docs/screenshots/export_modal.png) |
 
 ---
 
-## Security Model
+## Requirements
 
-SkillSpector UI enforces a strict Electron security boundary:
-
-| Layer | Policy |
-|-------|--------|
-| **`contextIsolation`** | `true` — Renderer has no access to Node.js globals |
-| **`nodeIntegration`** | `false` — No `require()` in renderer |
-| **`sandbox`** | `true` — Chromium sandbox enforced |
-| **Preload API** | Explicit allowlist of IPC channels via `contextBridge` |
-| **IPC Validation** | All renderer-controlled arguments validated in main process |
-| **Subprocess Execution** | `spawn()` only, `shell: false`, explicit argument arrays |
-| **Path Validation** | `fs.realpathSync` prevents symlink/junction traversal attacks |
-| **No Generic Shell** | No `exec()`, no command-string construction, no arbitrary code execution |
-| **Process-Scoped Env** | LLM provider variables set per-spawn, never mutate global `process.env` |
-
-### IPC Channel Allowlist
-
-The renderer can only call these channels through the typed `window.api` bridge:
-
-```
-Dialogs       selectFolder · selectFile · saveFileDialog
-Detection     skillspector:status · skillspector:test
-Ollama        ollama:status · ollama:models
-Scanning      scan:start · scan:cancel · scan:single-skill
-Settings      settings:get · settings:save
-History       history:index · history:report · history:delete · history:clear
-Favorites     favorites:get · favorites:save · favorites:delete
-Shell         shell:open-file · shell:copy-text
-Export        export:report · export:scan-and-export
-```
+- **[NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector)** (v2.11+) — installed with its Python virtual environment. See [installation instructions](https://github.com/NVIDIA/skillspector#installation).
+- **Node.js** (v18+)
+- **Ollama** *(optional)* — only needed if you want LLM-enhanced semantic analysis. Detected automatically at `localhost:11434`.
 
 ---
 
-## Project Structure
-
-```
-skillspector-ui/
-├── electron/                     # Main process (Node.js)
-│   ├── main.ts                   # App lifecycle, window creation, security config
-│   ├── preload.ts                # Context bridge — typed IPC API surface
-│   ├── types.ts                  # Shared types & IPC contract
-│   ├── ipc/                      # Modular IPC handler registrations
-│   │   ├── index.ts              # Central handler registry
-│   │   ├── dialogs.ts            # OS file/folder dialogs
-│   │   ├── export.ts             # JSON dump & CLI format export
-│   │   ├── favorites.ts          # Favorites persistence
-│   │   ├── history.ts            # Scan history management
-│   │   ├── ollama.ts             # Ollama status & model queries
-│   │   ├── scan.ts               # Scan start/cancel/single-skill
-│   │   ├── settings.ts           # Settings & detector integration
-│   │   └── shell.ts              # Safe file-open & clipboard
-│   └── services/                 # Business logic
-│       ├── runner.ts             # CLI spawn, progress parsing, normalization
-│       ├── detector.ts           # Auto-detect skillspector.exe (4-tier waterfall)
-│       ├── completeness.ts       # Analysis completeness derivation
-│       ├── export.ts             # Export orchestration
-│       ├── history.ts            # Two-tier persistence (index + reports)
-│       ├── ollama.ts             # HTTP client for Ollama REST API
-│       └── storage.ts            # Atomic read/write with temp+rename
-│
-├── src/                          # Renderer process (React)
-│   ├── App.tsx                   # Root layout with view routing
-│   ├── main.tsx                  # React DOM root mount
-│   ├── index.css                 # Tailwind imports & design tokens
-│   ├── components/
-│   │   ├── layout/               # Sidebar, Header
-│   │   ├── scan/                 # ScanConfig, ScanProgress, ScanSummary,
-│   │   │                         # ResultsTable, FindingsList, SkillDetail,
-│   │   │                         # CompletenessCard, ExportModal, RawOutput,
-│   │   │                         # ScanWarnings, InspectionWarnings
-│   │   ├── history/              # HistoryList, ScanComparison
-│   │   ├── favorites/            # FavoritesList
-│   │   └── settings/             # SettingsPage
-│   ├── views/                    # ScanView, HistoryView, FavoritesView, SettingsView
-│   ├── stores/                   # Zustand state management
-│   │   ├── appStore.ts           # App-wide state (detection, ollama, settings)
-│   │   └── scanStore.ts          # Scan execution, results, filtering, caching
-│   ├── lib/                      # Pure utility functions
-│   │   ├── completeness.ts       # UI completeness re-derivation
-│   │   └── comparison.ts         # Scan comparability & finding matching
-│   └── types/                    # Frontend type definitions
-│       ├── api.ts                # NormalizedScanResult, NormalizedSkillResult
-│       └── skillspector.ts       # View types, filter options
-│
-├── scripts/                      # Verification & regression test scripts
-│   ├── verify.ts                 # Core architecture tests
-│   ├── verify-fixes.ts           # Security fix regression tests
-│   ├── verify-presentation-fixes.ts
-│   ├── verify-recursive-completeness.ts
-│   └── verify-scan-comparison.ts
-│
-├── launch.bat                    # Windows one-click launcher
-├── package.json
-├── vite.config.ts
-├── tailwind.config.cjs
-├── tsconfig.json                 # Renderer TypeScript config
-└── tsconfig.node.json            # Electron/Node TypeScript config
-```
-
----
-
-## Prerequisites
-
-| Requirement | Version | Notes |
-|-------------|---------|-------|
-| **Node.js** | ≥ 18 | Required for Electron and Vite |
-| **npm** | ≥ 9 | Included with Node.js |
-| **[NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector)** | ≥ 2.11 | **Required.** Install with Python venv per [NVIDIA's instructions](https://github.com/NVIDIA/skillspector#installation). Auto-detected or configurable in Settings. |
-| **Ollama** *(optional)* | Any | Only needed for LLM-enhanced semantic analysis. Auto-detected at `localhost:11434`. |
-
----
-
-## Getting Started
-
-### Install Dependencies
+## Installation
 
 ```bash
+git clone https://github.com/flogrema/skillspector-ui.git
+cd skillspector-ui
 npm install
 ```
 
-### Launch
+---
 
-**Option A — One-Click (Windows)**
+## Usage
 
-Double-click `launch.bat`. It auto-builds on first run if needed.
+**Quick launch (Windows):**
 
-**Option B — Terminal**
+Double-click `launch.bat` — builds automatically on first run.
+
+**From terminal:**
 
 ```bash
-npm start
+npm start          # Build and launch
 ```
 
-### Development Mode
-
-Hot-reloading with Vite dev server and Electron:
+**Development mode** (hot-reload with Vite + Electron):
 
 ```bash
 npm run electron:dev
 ```
 
-Or frontend-only dev server (no Electron window):
+**Other commands:**
 
 ```bash
-npm run dev
+npm run build      # Production build
+npm run typecheck   # Type-check both renderer and electron code
+npm run dev         # Vite dev server only (no Electron window)
 ```
 
-### Type Checking
-
-```bash
-npm run typecheck
-```
-
-### Production Build
-
-```bash
-npm run build
-```
-
----
-
-## Keyboard Shortcuts
+### Keyboard shortcuts
 
 | Shortcut | Action |
 |----------|--------|
-| `Alt + 1` | Switch to Scan view |
-| `Alt + 2` | Switch to History view |
-| `Alt + 3` | Switch to Favorites view |
-| `Alt + 4` | Switch to Settings view |
-| `Ctrl + Enter` | Start scan (when target path is set) |
+| `Ctrl + Enter` | Start scan |
+| `Alt + 1` | Scan view |
+| `Alt + 2` | History view |
+| `Alt + 3` | Favorites view |
+| `Alt + 4` | Settings view |
 
 ---
 
-## Data Storage
+## How it works
 
-All runtime data is stored in `%APPDATA%\SkillSpector UI\` — the NVIDIA SkillSpector repository is never modified.
+SkillSpector UI is a frontend. NVIDIA SkillSpector does the actual scanning.
+
+The app locates `skillspector.exe` automatically (or uses a manually configured path), then invokes it as a subprocess using `child_process.spawn` with explicit argument arrays and `shell: false`. No shell string interpolation, no `exec()`.
+
+```
+skillspector.exe scan <target> --format json --output <tempfile> [--recursive] [--no-llm]
+```
+
+When LLM analysis is enabled, Ollama connection details are passed via process-scoped environment variables (`SKILLSPECTOR_PROVIDER`, `SKILLSPECTOR_MODEL`, `OLLAMA_BASE_URL`).
+
+The CLI writes a JSON report to a temp file. The app reads it, normalizes the data into a structured format, saves it to history, and displays it in the UI. Stdout is parsed in real-time for progress updates (`[3/7] Scanning skill-name`).
+
+### Detection waterfall
+
+The app tries to find SkillSpector in this order:
+
+1. User-configured custom path (from Settings)
+2. Known absolute path on disk
+3. Relative candidate paths (e.g. `../skillspector/.venv/Scripts/skillspector.exe`)
+4. System PATH via `where.exe`
+
+Each candidate is validated by running `skillspector.exe --version` and checking for a recognized version string.
+
+### Data storage
+
+All app data lives in `%APPDATA%\SkillSpector UI\`. The NVIDIA SkillSpector installation is never modified.
 
 ```
 %APPDATA%\SkillSpector UI\
-├── settings.json          # App configuration
-├── favorites.json         # Bookmarked scan targets
-├── recent-paths.json      # Recently used target paths
+├── settings.json
+├── favorites.json
+├── recent-paths.json
 └── history/
-    ├── index.json          # Lightweight scan index (metadata only)
+    ├── index.json            # Lightweight metadata index
     └── scans/
-        ├── <uuid>.json     # Full NormalizedScanResult for each scan
-        └── ...
+        └── <uuid>.json       # Full scan report per scan
 ```
 
 ---
 
-## SkillSpector Detection
+## Security
 
-The app uses a 4-tier waterfall to locate `skillspector.exe`:
+The Electron app follows security best practices:
 
-```mermaid
-flowchart TD
-    A[1. Custom Path from Settings] -->|Not found| B[2. Known Absolute Path]
-    B -->|Not found| C[3. Relative Candidate Paths]
-    C -->|Not found| D["4. System PATH (where.exe)"]
-    
-    A -->|Found| V[Validate: --version]
-    B -->|Found| V
-    C -->|Found| V
-    D -->|Found| V
-    D -->|Not found| F[❌ Not Found — Configure in Settings]
-    
-    V -->|Valid| S["✅ Detected\nVersion + Python Runtime"]
-    V -->|Invalid| F
-
-    style S fill:#09090b,stroke:#10b981,color:#10b981
-    style F fill:#09090b,stroke:#ef4444,color:#ef4444
-```
+- `contextIsolation: true`, `nodeIntegration: false`, `sandbox: true`
+- Renderer communicates with the main process only through a typed IPC allowlist exposed via `contextBridge`
+- All subprocess calls use `spawn()` with explicit argument arrays — no shell, no `exec()`
+- File paths from the renderer are validated with `fs.realpathSync` to prevent symlink/junction traversal
+- Process environment variables for LLM config are scoped per-spawn, not set globally
 
 ---
 
-## Verification Scripts
+## Tech stack
 
-Run regression and architecture tests without modifying source code:
+| | |
+|---|---|
+| Runtime | Electron 35 |
+| Frontend | React 19, Zustand 5 |
+| Styling | Tailwind CSS 3, Lucide icons |
+| Bundler | Vite 6 |
+| Language | TypeScript 5.8 (end-to-end) |
+
+---
+
+## Project status
+
+This is a v1.0 release. The core scan workflow, history, comparison, and export features are implemented and tested. There are currently no pre-built binaries — you run it from source via `npm start`.
+
+Known limitations:
+- Windows only (process management uses `taskkill`)
+- No packaged `.exe` installer — requires Node.js to run
+- SkillSpector must be installed separately
+
+---
+
+## Verification
+
+The project includes regression test scripts that validate architecture, security boundaries, completeness logic, and comparison semantics without modifying source code:
 
 ```bash
-npx tsx scripts/verify.ts                        # Core architecture (17 tests)
-npx tsx scripts/verify-fixes.ts                  # Security fix regressions (38 tests)
-npx tsx scripts/verify-presentation-fixes.ts     # Presentation correctness (18 tests)
-npx tsx scripts/verify-recursive-completeness.ts # Completeness derivation (36 tests)
-npx tsx scripts/verify-scan-comparison.ts        # Comparison semantics (35 tests)
+npx tsx scripts/verify.ts                         # 17 tests
+npx tsx scripts/verify-fixes.ts                   # 38 tests
+npx tsx scripts/verify-presentation-fixes.ts      # 18 tests
+npx tsx scripts/verify-recursive-completeness.ts  # 36 tests
+npx tsx scripts/verify-scan-comparison.ts         # 35 tests
 ```
 
 ---
 
-## Tech Stack
+## Credits
 
-| Layer | Technology | Purpose |
-|-------|-----------|---------|
-| Desktop Runtime | Electron 35 | Sandboxed Chromium + Node.js |
-| Frontend Framework | React 19 | Component-based UI |
-| State Management | Zustand 5 | Lightweight stores with IPC bridge |
-| Styling | Tailwind CSS 3 | Utility-first, Apple dark aesthetic |
-| Icons | Lucide React | Consistent icon set |
-| Bundler | Vite 6 | Fast HMR and production builds |
-| Type System | TypeScript 5.8 | End-to-end type safety |
-| CLI Integration | child_process.spawn | Secure subprocess execution |
+- [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector) — the security scanner this UI is built around (Apache 2.0)
+- [Ollama](https://ollama.com) — local LLM inference used for optional semantic analysis
 
 ---
 
-## Design System
+## Disclaimer
 
-The UI follows an Apple-inspired dark design system:
+SkillSpector UI is an independent community project by [0xFloCode](https://github.com/0xFloCode).
+It is **not affiliated with, endorsed by, or supported by NVIDIA Corporation**.
 
-- **Canvas**: Pitch-dark background `#09090b`
-- **Card Surfaces**: Elevated panels `#121215` / `#18181c`
-- **Borders**: Hairline `rgba(255, 255, 255, 0.08)`
-- **Typography**: High-contrast white `#fafafa`, secondary `#86868b`
-- **Accent**: Cyan `#0ea5e9` for interactive elements and active states
-- **Severity**: Always communicated via color + icon + text label (never color alone)
-- **Layout**: Two-layer depth — content layer (solid surfaces) and functional layer (sidebar, header, dialogs with `backdrop-blur-xl`)
+NVIDIA and SkillSpector are trademarks of NVIDIA Corporation. This application does not modify, bundle, or redistribute any part of NVIDIA SkillSpector — it invokes the separately installed CLI as a subprocess.
 
 ---
 
-## License & Attribution
+## License
 
-© 2026 [0xFloCode](https://github.com/0xFloCode). All rights reserved.
-
-This project is an **independent, third-party desktop frontend** for [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector).
-It is **not affiliated with, endorsed by, or sponsored by NVIDIA Corporation**.
-
-- **SkillSpector UI** (this project): [MIT License](LICENSE).
-- **NVIDIA SkillSpector** (the CLI scanner): Licensed under the [Apache License 2.0](https://github.com/NVIDIA/skillspector/blob/main/LICENSE) by NVIDIA Corporation.
-- **NVIDIA** and **SkillSpector** are trademarks of NVIDIA Corporation.
-
-This application does not modify, bundle, or redistribute any part of NVIDIA SkillSpector. It invokes the separately installed CLI as a subprocess.
-
----
-
-<div align="center">
-
-*Built with [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector) · Electron · React · TypeScript*
-
-</div>
+[MIT](LICENSE)
