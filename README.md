@@ -11,7 +11,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
 ![Tailwind](https://img.shields.io/badge/TailwindCSS-3-06B6D4?logo=tailwindcss&logoColor=white)
-![License](https://img.shields.io/badge/License-Private-333333)
+![License](https://img.shields.io/badge/License-MIT-22c55e)
 
 </div>
 
@@ -454,7 +454,7 @@ The UI follows an Apple-inspired dark design system:
 This project is an **independent, third-party desktop frontend** for [NVIDIA SkillSpector](https://github.com/NVIDIA/skillspector).
 It is **not affiliated with, endorsed by, or sponsored by NVIDIA Corporation**.
 
-- **SkillSpector UI** (this project): Private / All rights reserved.
+- **SkillSpector UI** (this project): [MIT License](LICENSE).
 - **NVIDIA SkillSpector** (the CLI scanner): Licensed under the [Apache License 2.0](https://github.com/NVIDIA/skillspector/blob/main/LICENSE) by NVIDIA Corporation.
 - **NVIDIA** and **SkillSpector** are trademarks of NVIDIA Corporation.
 
